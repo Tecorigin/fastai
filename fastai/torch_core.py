@@ -9,7 +9,7 @@ from .torch_imports import *
 from packaging.version import parse
 
 # %% auto 0
-__all__ = ['norm_types', 'setup_cuda', 'subplots', 'show_image', 'show_titled_image', 'show_images', 'ArrayBase',
+__all__ = ['norm_types', 'setup_sdaa', 'subplots', 'show_image', 'show_titled_image', 'show_images', 'ArrayBase',
            'ArrayImageBase', 'ArrayImage', 'ArrayImageBW', 'ArrayMask', 'tensor', 'set_seed', 'get_random_states',
            'set_random_states', 'no_random', 'unsqueeze', 'unsqueeze_', 'apply', 'maybe_gather', 'to_detach', 'to_half',
            'to_float', 'default_device', 'to_device', 'to_cpu', 'to_np', 'to_concat', 'TensorBase', 'TensorImageBase',
@@ -30,12 +30,12 @@ _all_ = ['progress_bar','master_bar']
 defaults.benchmark = True
 
 # %% ../nbs/00_torch_core.ipynb 7
-def setup_cuda(benchmark=defaults.benchmark):
-    "Sets the main cuda device and sets `cudnn.benchmark` to `benchmark`"
-    if torch.cuda.is_available():
-        if torch.cuda.current_device()==0:
+def setup_sdaa(benchmark=defaults.benchmark):
+    "Sets the main sdaa device and sets `cudnn.benchmark` to `benchmark`"
+    if torch.sdaa.is_available():
+        if torch.sdaa.current_device()==0:
             def_gpu = int(os.environ.get('DEFAULT_GPU') or 0)
-            if torch.cuda.device_count()>=def_gpu: torch.cuda.set_device(def_gpu)
+            if torch.sdaa.device_count()>=def_gpu: torch.sdaa.set_device(def_gpu)
         torch.backends.cudnn.benchmark = benchmark
 
 # %% ../nbs/00_torch_core.ipynb 10
@@ -162,7 +162,7 @@ def set_seed(s, reproducible=False):
     "Set random seed for `random`, `torch`, and `numpy` (where available)"
     try: torch.manual_seed(s)
     except NameError: pass
-    try: torch.cuda.manual_seed_all(s)
+    try: torch.sdaa.manual_seed_all(s)
     except NameError: pass
     try: np.random.seed(s%(2**32-1))
     except NameError: pass
@@ -177,17 +177,17 @@ def get_random_states():
     return {'random_state':random.getstate(),
             'numpy_state':np.random.get_state(),
             'torch_state':torch.get_rng_state(),
-            'torch_cuda_state':torch.cuda.get_rng_state_all(),
+            'torch_sdaa_state':torch.sdaa.get_rng_state_all(),
             'torch_deterministic':torch.backends.cudnn.deterministic,
             'torch_benchmark':torch.backends.cudnn.benchmark}
 
 # %% ../nbs/00_torch_core.ipynb 48
-def set_random_states(random_state,numpy_state,torch_state,torch_cuda_state,torch_deterministic,torch_benchmark):
+def set_random_states(random_state,numpy_state,torch_state,torch_sdaa_state,torch_deterministic,torch_benchmark):
     "Set states for `random`, `torch`, and `numpy` random number generators"
     random.setstate(random_state)
     np.random.set_state(numpy_state)
     torch.set_rng_state(torch_state)
-    torch.cuda.set_rng_state_all(torch_cuda_state)
+    torch.sdaa.set_rng_state_all(torch_sdaa_state)
     torch.backends.cudnn.deterministic=torch_deterministic
     torch.backends.cudnn.benchmark=torch_benchmark
 
@@ -257,7 +257,7 @@ def to_float(b):
 
 # %% ../nbs/00_torch_core.ipynb 70
 # None: True if available; True: error if not available; False: use CPU
-defaults.use_cuda = None
+defaults.use_sdaa = None
 
 # %% ../nbs/00_torch_core.ipynb 71
 def _has_mps():
@@ -265,20 +265,20 @@ def _has_mps():
     return nested_attr(torch, 'backends.mps.is_built', False)()
 
 def default_device(use=-1):
-    "Return or set default device; `use_cuda`: -1 - CUDA/mps if available; True - error if not available; False - CPU"
-    if use == -1: use = defaults.use_cuda
-    else: defaults.use_cuda=use
+    "Return or set default device; `use_sdaa`: -1 - sdaa/mps if available; True - error if not available; False - CPU"
+    if use == -1: use = defaults.use_sdaa
+    else: defaults.use_sdaa=use
     if use is None:
-        if torch.cuda.is_available() or _has_mps(): use = True
+        if torch.sdaa.is_available() or _has_mps(): use = True
     if use:
-        if torch.cuda.is_available(): return torch.device(torch.cuda.current_device())
+        if torch.sdaa.is_available(): return torch.device(torch.sdaa.current_device())
         if _has_mps(): return torch.device('mps')
     return torch.device('cpu')
 
 # %% ../nbs/00_torch_core.ipynb 73
 def to_device(b, device=None, non_blocking=False):
     "Recursively put `b` on `device`."
-    if defaults.use_cuda==False: device='cpu'
+    if defaults.use_sdaa==False: device='cpu'
     elif device is None: device=default_device()
     def _inner(o):
         # ToDo: add TensorDict when released

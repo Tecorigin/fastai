@@ -3,7 +3,7 @@
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"defaults.benchmark": "00_torch_core.ipynb",
-         "setup_cuda": "00_torch_core.ipynb",
+         "setup_sdaa": "00_torch_core.ipynb",
          "subplots": "00_torch_core.ipynb",
          "show_image": "00_torch_core.ipynb",
          "show_titled_image": "00_torch_core.ipynb",

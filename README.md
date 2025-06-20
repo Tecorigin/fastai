@@ -8,39 +8,14 @@
 only)](https://img.shields.io/conda/vn/fastai/fastai?color=seagreen&label=conda%20version.png)](https://anaconda.org/fastai/fastai)
 ![docs](https://github.com/fastai/fastai/workflows/docs/badge.svg)
 
-## Installing
+## Installing for SDAA
 
-You can use fastai without any installation by using [Google
-Colab](https://colab.research.google.com/). In fact, every page of this
-documentation is also available as an interactive notebook - click “Open
-in colab” at the top of any page to open it (be sure to change the Colab
-runtime to “GPU” to have it run fast!) See the fast.ai documentation on
-[Using Colab](https://course19.fast.ai/start_colab.html) for more information.
-
-You can install fastai on your own machines with conda (highly
-recommended), as long as you’re running Linux or Windows (NB: Mac is not
-supported). For Windows, please see the “Running on Windows” for
-important notes.
-
-We recommend using
-[miniconda](https://docs.conda.io/en/latest/miniconda.html) (or
-miniforge). First install PyTorch using the conda line shown
-[here](https://pytorch.org/get-started/locally/), and then run:
+We recommend **Python 3.10.0**, **PyTorch for SDAA**.
 
 ``` bash
-conda install fastai::fastai
+cd dist 
+pip install fastai-2.8.1-py3-none-any.whl
 ```
-
-To install with pip, use: `pip install fastai`.
-
-If you plan to develop fastai yourself, or want to be on the cutting
-edge, you can use an editable install (if you do this, you should also
-use an editable install of
-[fastcore](https://github.com/fastai/fastcore) to go with it.) First
-install PyTorch, and then:
-
-    git clone https://github.com/fastai/fastai
-    pip install -e "fastai[dev]"
 
 ## Learning fastai
 
